@@ -77,7 +77,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "\n<nav class=\"navbar navbar-light bg-light\">\n    <a class=\"\"  routerLink=\"/\">\n        Все карты\n    </a>\n</nav>\n<div class=\"container\">\n    <router-outlet></router-outlet>\n</div>"
+module.exports = "\n\n<ul class=\"nav\">\n    \n  <li class=\"nav-item\">\n      <a class=\"nav-link active\" routerLink=\"/\">Все карты</a>\n    </li>\n    <li class=\"nav-item\">\n          <a class=\"nav-link active\" routerLink=\"/\">Любимые</a>\n        </li>\n</ul>\n<div class=\"container\">\n    <router-outlet></router-outlet>\n</div>"
 
 /***/ }),
 
