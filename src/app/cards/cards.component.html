@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col">
+      <p>
+        <input [(ngModel)]="cardName" placeholder="name" class="form-control">
+      </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-4" *ngFor="let card of allCards | cardNameFilter:cardName">
+      <p>
+        <a routerLink="/translate/{{card.multiverseid}}">
+          <img src="http://mythicspoiler.com/ust/cards/{{imageName(card.imageName)}}.jpg" width="100%">
+        </a>
+      </p>
+  </div>
+</div>

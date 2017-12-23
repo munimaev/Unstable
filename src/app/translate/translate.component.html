@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-4">
+      <p>
+          <img src="http://mythicspoiler.com/ust/cards/{{getImageName(card)}}.jpg" width="100%">
+      </p>
+  </div>
+  <div class="col">
+      <h4>{{getName(card)}}</h4>
+      <p *ngFor="let line of getTextLinesRus(card)">
+        {{line}}
+      </p>
+      <h4>{{card.name}}</h4>
+      <p *ngFor="let line of getTextLines(card)">
+        {{line}}
+      </p>
+  </div>
+</div>
