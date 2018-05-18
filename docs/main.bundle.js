@@ -77,7 +77,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "\n\n<ul class=\"nav\">\n    \n  <li class=\"nav-item\">\n      <a class=\"nav-link active\" routerLink=\"/\">Все карты</a>\n    </li>\n    <li class=\"nav-item\">\n          <a class=\"nav-link active\" routerLink=\"/\">Любимые</a>\n        </li>\n</ul>\n<div class=\"container\">\n    <router-outlet></router-outlet>\n</div>"
+module.exports = "<div class=\"container\" style=\"margin-top: 1em;\">\n    <router-outlet></router-outlet>\n</div>"
 
 /***/ }),
 
@@ -128,12 +128,16 @@ var AppComponent = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__app_routing_module__ = __webpack_require__("../../../../../src/app/app-routing.module.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__translate_translate_component__ = __webpack_require__("../../../../../src/app/translate/translate.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__card_service__ = __webpack_require__("../../../../../src/app/card.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__favorites_favorites_component__ = __webpack_require__("../../../../../src/app/favorites/favorites.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__only_favorites_card_pipe__ = __webpack_require__("../../../../../src/app/only-favorites-card.pipe.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -156,7 +160,9 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__cards_cards_component__["a" /* CardsComponent */],
                 __WEBPACK_IMPORTED_MODULE_6__card_name_filter_pipe__["a" /* CardNameFilterPipe */],
                 __WEBPACK_IMPORTED_MODULE_7__card_image_nameng_pipe__["a" /* CardImageNamengPipe */],
-                __WEBPACK_IMPORTED_MODULE_9__translate_translate_component__["a" /* TranslateComponent */]
+                __WEBPACK_IMPORTED_MODULE_9__translate_translate_component__["a" /* TranslateComponent */],
+                __WEBPACK_IMPORTED_MODULE_11__favorites_favorites_component__["a" /* FavoritesComponent */],
+                __WEBPACK_IMPORTED_MODULE_12__only_favorites_card_pipe__["a" /* OnlyFavoritesCardPipe */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
@@ -261,9 +267,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 var CardService = (function () {
     function CardService() {
+        this.allFavoritesCards = localStorage.getItem('favoriteCards') ? localStorage.getItem('favoriteCards').split(',') : [];
     }
     CardService.prototype.getCards = function () {
         return __WEBPACK_IMPORTED_MODULE_1__data_cards__["a" /* CARDS */];
+    };
+    CardService.prototype.getFavoritesCards = function () {
+        return this.allFavoritesCards;
     };
     CardService.prototype.getCard = function (id) {
         var result = null;
@@ -278,6 +288,27 @@ var CardService = (function () {
     CardService.prototype.getImageName = function (card) {
         var re = /\s*;\s*/;
         return card.imageName.split(/[ \,\.-]/).join('');
+    };
+    CardService.prototype.addFavoritesCard = function (card) {
+        var id = String(card.multiverseid);
+        if (this.allFavoritesCards.indexOf(id) === -1) {
+            this.allFavoritesCards.push(id);
+        }
+        this.setFavorites(this.allFavoritesCards);
+    };
+    CardService.prototype.removeFavoritesCard = function (card) {
+        var i1 = this.allFavoritesCards.indexOf(String(card.multiverseid), 0);
+        if (i1 >= 0) {
+            this.allFavoritesCards.splice(i1, 1);
+            console.log(this.allFavoritesCards);
+            this.setFavorites(this.allFavoritesCards);
+        }
+    };
+    CardService.prototype.setFavorites = function (ids) {
+        localStorage.setItem('favoriteCards', ids);
+    };
+    CardService.prototype.isInFavorites = function (card) {
+        return !!~this.allFavoritesCards.indexOf(String(card.multiverseid));
     };
     CardService = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Injectable */])(),
@@ -311,7 +342,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/cards/cards.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row\">\n    <div class=\"col\">\n      <p>\n        <input [(ngModel)]=\"cardName\" placeholder=\"name\" class=\"form-control\">\n      </p>\n    </div>\n</div>\n<div class=\"row\">\n    <div class=\"col-4\" *ngFor=\"let card of allCards | cardNameFilter:cardName\">\n      <p>\n        <a routerLink=\"/translate/{{card.multiverseid}}\">\n          <img src=\"http://mythicspoiler.com/ust/cards/{{imageName(card.imageName)}}.jpg\" width=\"100%\">\n        </a>\n      </p>\n  </div>\n</div>"
+module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <div class=\"form-group\">\n          <input [(ngModel)]=\"cardName\" placeholder=\"name\" class=\"form-control\">\n        </div>\n        <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input type=\"checkbox\" class=\"form-check-input\" [(ngModel)]=\"onlyFav\" (click)=\"saveFovoriteMode(onlyFav)\"> Только любимые\n          </label>\n        </div>\n    </div>\n</div>\n<div class=\"row\">\n    <div class=\"col-4\" *ngFor=\"let card of allCards | cardNameFilter:cardName | onlyFavoritesCard:onlyFav\">\n      <p>\n        <a routerLink=\"/translate/{{card.multiverseid}}\">\n          <img src=\"http://mythicspoiler.com/ust/cards/{{imageName(card.imageName)}}.jpg\" width=\"100%\">\n        </a>\n      </p>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -337,16 +368,24 @@ var CardsComponent = (function () {
     function CardsComponent(cardService) {
         this.cardService = cardService;
         this.cardName = '';
+        this.onlyFav = localStorage.getItem('onlyFav') ? (localStorage.getItem('onlyFav') === "true" ? true : false) : false;
     }
     CardsComponent.prototype.imageName = function (name) {
         var re = /\s*;\s*/;
         return name.split(/[ \,\.-]/).join('');
     };
     CardsComponent.prototype.ngOnInit = function () {
+        this.getFavoritesCards();
         this.getCards();
     };
     CardsComponent.prototype.getCards = function () {
         this.allCards = this.cardService.getCards();
+    };
+    CardsComponent.prototype.getFavoritesCards = function () {
+        this.allFavoritesCards = this.cardService.getFavoritesCards();
+    };
+    CardsComponent.prototype.saveFovoriteMode = function (status) {
+        localStorage.setItem('onlyFav', status ? 'true' : 'false');
     };
     CardsComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -1701,7 +1740,7 @@ var CARDS = [
             "Knight"
         ],
         "text": "{T}: Uninstall all results from Socketed Sprocketer, then roll a six-sided die. Install the result on Socketed Sprocketer. (Put the die on this card.)\nYou may uninstall a result from Socketed Sprocketer to use it for a die you rolled.\nUninstall a 6 from Socketed Sprocketer: Draw a card.",
-        "textRus": "{T}: Удилите все результаты со Звездочника с разъемом, затем бросьте шестигранный кубик. Установиите результат на Звездочника с разъемом. (Положите кубик на эту карты.)\nВы можете удалить результат со Звездочника с разъемом, что бы использовать его для резльтата вашего броска кубика.\n Удалите результат 6 со Звездочника с рахъемом: Возьмите карту.",
+        "textRus": "{T}: Удалите все результаты со Звездочника с разъемом, затем бросьте шестигранный кубик. Установиите результат на Звездочника с разъемом. (Положите кубик на эту карты.)\nВы можете удалить результат со Звездочника с разъемом, что бы использовать его для резльтата вашего броска кубика.\n Удалите результат 6 со Звездочника с рахъемом: Возьмите карту.",
         "toughness": "1",
         "type": "Artifact Creature — Cyborg Knight",
         "types": [
@@ -6371,6 +6410,67 @@ var CARDS = [
 
 /***/ }),
 
+/***/ "../../../../../src/app/favorites/favorites.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/favorites/favorites.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<p>\n  favorites works!\n</p>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/favorites/favorites.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FavoritesComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var FavoritesComponent = (function () {
+    function FavoritesComponent() {
+    }
+    FavoritesComponent.prototype.ngOnInit = function () {
+    };
+    FavoritesComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'app-favorites',
+            template: __webpack_require__("../../../../../src/app/favorites/favorites.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/favorites/favorites.component.css")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], FavoritesComponent);
+    return FavoritesComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/heroes/heroes.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6460,6 +6560,50 @@ var HEROES = [
 
 /***/ }),
 
+/***/ "../../../../../src/app/only-favorites-card.pipe.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OnlyFavoritesCardPipe; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__card_service__ = __webpack_require__("../../../../../src/app/card.service.ts");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var OnlyFavoritesCardPipe = (function () {
+    function OnlyFavoritesCardPipe(cardService) {
+        this.cardService = cardService;
+    }
+    OnlyFavoritesCardPipe.prototype.transform = function (value, args) {
+        if (args) {
+            var ids_1 = this.cardService.getFavoritesCards();
+            return value.filter(function (card) {
+                return ids_1.indexOf(String(card.multiverseid)) >= 0;
+            });
+        }
+        return value;
+    };
+    OnlyFavoritesCardPipe = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* Pipe */])({
+            name: 'onlyFavoritesCard'
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__card_service__["a" /* CardService */]])
+    ], OnlyFavoritesCardPipe);
+    return OnlyFavoritesCardPipe;
+}());
+
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/translate/translate.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6481,7 +6625,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/translate/translate.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row\">\n  <div class=\"col-4\">\n      <p>\n          <img src=\"http://mythicspoiler.com/ust/cards/{{getImageName(card)}}.jpg\" width=\"100%\">\n      </p>\n  </div>\n  <div class=\"col\">\n      <h4>{{getName(card)}}</h4>\n      <p *ngFor=\"let line of getTextLinesRus(card)\">\n        {{line}}\n      </p>\n      <h4>{{card.name}}</h4>\n      <p *ngFor=\"let line of getTextLines(card)\">\n        {{line}}\n      </p>\n  </div>\n</div>\n"
+module.exports = "<div class=\"row\">\n  <div class=\"col-4\">\n      <p>\n        <a routerLink=\"/\">Все карты</a>\n      </p>\n      <p>\n          <a routerLink=\"/\">\n            <img src=\"http://mythicspoiler.com/ust/cards/{{getImageName(card)}}.jpg\" width=\"100%\">\n          </a>\n      </p>\n      <p>\n          <button type=\"button\" class=\"btn btn-primary btn-sm\" (click)=\"addToFavorites(card)\" *ngIf=\"!isInFavorites(card)\">Полюбить</button>\n          <button type=\"button\" class=\"btn btn-primary btn-sm\" (click)=\"removeFromFavorites(card)\"  *ngIf=\"isInFavorites(card)\">Разлюбить</button>\n      </p>\n  </div>\n  <div class=\"col\">\n      <h4>{{getName(card)}}</h4>\n      <p *ngFor=\"let line of getTextLinesRus(card)\">\n        {{line}}\n      </p>\n      <h4>{{card.name}}</h4>\n      <p *ngFor=\"let line of getTextLines(card)\">\n        {{line}}\n      </p>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -6540,6 +6684,15 @@ var TranslateComponent = (function () {
     };
     TranslateComponent.prototype.getNextCardId = function (card) {
         return card.multiverseid + 1;
+    };
+    TranslateComponent.prototype.addToFavorites = function (card) {
+        this.cardService.addFavoritesCard(card);
+    };
+    TranslateComponent.prototype.removeFromFavorites = function (card) {
+        this.cardService.removeFavoritesCard(card);
+    };
+    TranslateComponent.prototype.isInFavorites = function (card) {
+        return this.cardService.isInFavorites(card);
     };
     TranslateComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({

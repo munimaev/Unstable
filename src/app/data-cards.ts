@@ -1333,7 +1333,7 @@ export const CARDS: Card[] = [
         "Knight"
     ],
     "text": "{T}: Uninstall all results from Socketed Sprocketer, then roll a six-sided die. Install the result on Socketed Sprocketer. (Put the die on this card.)\nYou may uninstall a result from Socketed Sprocketer to use it for a die you rolled.\nUninstall a 6 from Socketed Sprocketer: Draw a card.",
-    "textRus":"{T}: Удилите все результаты со Звездочника с разъемом, затем бросьте шестигранный кубик. Установиите результат на Звездочника с разъемом. (Положите кубик на эту карты.)\nВы можете удалить результат со Звездочника с разъемом, что бы использовать его для резльтата вашего броска кубика.\n Удалите результат 6 со Звездочника с рахъемом: Возьмите карту.",
+    "textRus":"{T}: Удалите все результаты со Звездочника с разъемом, затем бросьте шестигранный кубик. Установиите результат на Звездочника с разъемом. (Положите кубик на эту карты.)\nВы можете удалить результат со Звездочника с разъемом, что бы использовать его для резльтата вашего броска кубика.\n Удалите результат 6 со Звездочника с рахъемом: Возьмите карту.",
     "toughness": "1",
     "type": "Artifact Creature — Cyborg Knight",
     "types": [

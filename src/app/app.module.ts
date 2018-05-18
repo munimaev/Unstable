@@ -10,6 +10,8 @@ import { CardImageNamengPipe } from './card-image-nameng.pipe';
 import { AppRoutingModule } from './/app-routing.module';
 import { TranslateComponent } from './translate/translate.component';
 import { CardService } from './card.service';
+import { FavoritesComponent } from './favorites/favorites.component';
+import { OnlyFavoritesCardPipe } from './only-favorites-card.pipe';
 
 
 @NgModule({
@@ -19,7 +21,9 @@ import { CardService } from './card.service';
     CardsComponent,
     CardNameFilterPipe,
     CardImageNamengPipe,
-    TranslateComponent
+    TranslateComponent,
+    FavoritesComponent,
+    OnlyFavoritesCardPipe
   ],
   imports: [
     BrowserModule,

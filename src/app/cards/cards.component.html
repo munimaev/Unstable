@@ -1,12 +1,17 @@
 <div class="row">
     <div class="col">
-      <p>
-        <input [(ngModel)]="cardName" placeholder="name" class="form-control">
-      </p>
+        <div class="form-group">
+          <input [(ngModel)]="cardName" placeholder="name" class="form-control">
+        </div>
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" [(ngModel)]="onlyFav" (click)="saveFovoriteMode(onlyFav)"> Только любимые
+          </label>
+        </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-4" *ngFor="let card of allCards | cardNameFilter:cardName">
+    <div class="col-4" *ngFor="let card of allCards | cardNameFilter:cardName | onlyFavoritesCard:onlyFav">
       <p>
         <a routerLink="/translate/{{card.multiverseid}}">
           <img src="http://mythicspoiler.com/ust/cards/{{imageName(card.imageName)}}.jpg" width="100%">

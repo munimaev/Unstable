@@ -44,4 +44,13 @@ export class TranslateComponent implements OnInit {
   getNextCardId(card:Card) {
     return card.multiverseid+1 ;
   }
+  addToFavorites(card:Card) {
+    this.cardService.addFavoritesCard(card)
+  }
+  removeFromFavorites(card:Card) {
+    this.cardService.removeFavoritesCard(card)
+  }
+  isInFavorites(card:Card): boolean {
+    return this.cardService.isInFavorites(card)
+  }
 }
